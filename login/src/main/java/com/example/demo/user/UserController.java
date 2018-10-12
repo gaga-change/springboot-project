@@ -32,7 +32,7 @@ public class UserController {
         } else if (findUser.getPassword().equals(loginUser.getPassword())) {
             httpSession.setAttribute("user", findUser);
         } else {
-            res.put("error", "用户名不存在");
+            res.put("error", "密码错误");
         }
         return res;
     }

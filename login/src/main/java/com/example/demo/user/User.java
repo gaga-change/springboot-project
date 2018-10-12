@@ -2,6 +2,7 @@ package com.example.demo.user;
 
 import com.example.demo.card.Card;
 import com.example.demo.post.Post;
+import com.example.demo.util.Encrypt;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -22,11 +23,20 @@ public class User {
     @ApiModelProperty(hidden = true)
     private long id;
 
+    @ApiModelProperty(hidden = true)
+    private String ciphertext; // 密文
+
     @ApiModelProperty(value="用户名", example = "123")
     private String username;
 
+    public void setPassword(String password) {
+        this.ciphertext = Encrypt.turnMesssage(password);
+    }
+
     @ApiModelProperty(value="密码", example = "123")
-    private String password;
+    public String getPassword() {
+        return this.ciphertext;
+    }
 
 //    @OneToOne(mappedBy = "user")
 //    @ApiModelProperty(hidden = true)
