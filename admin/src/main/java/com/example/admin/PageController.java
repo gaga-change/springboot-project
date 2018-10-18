@@ -9,11 +9,12 @@ import java.util.Map;
 @RequestMapping("/")
 public class PageController {
     @RequestMapping("")
-    public String admin(Map<String, Object> map) {
-        map.put("demo1", "123");
-        map.put("demo3", "456");
-        map.put("demo2", "456");
-        System.out.println(map.toString());
+    public String admin() {
         return "index";
+    }
+
+    @RequestMapping("login.html")
+    public String login() {
+        return "login";
     }
 }
