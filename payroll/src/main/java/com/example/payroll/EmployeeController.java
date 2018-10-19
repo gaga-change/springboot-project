@@ -1,9 +1,15 @@
 package com.example.payroll;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Resource;
+import org.springframework.hateoas.Resources;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.core.DummyInvocationUtils.methodOn;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
@@ -11,9 +17,12 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 @RestController
 public class EmployeeController {
     private final EmployeeRepository repository;
+    private final EmployeeResourceAssembler assembler;
 
-    EmployeeController(EmployeeRepository repository) {
+    @Autowired
+    EmployeeController(EmployeeRepository repository, EmployeeResourceAssembler assembler) {
         this.repository = repository;
+        this.assembler = assembler;
     }
 
     /**
@@ -23,10 +32,19 @@ public class EmployeeController {
      * @return
      */
     @PostMapping("/employees")
-    Employee newEmployee(@RequestBody Employee employee) {
-        return repository.save(employee);
+    ResponseEntity<?> newEmployee(@RequestBody Employee employee) throws URISyntaxException {
+        Resource<Employee> resource = assembler.toResource(repository.save(employee));
+
+        return ResponseEntity
+                .created(new URI(resource.getId().expand().getHref()))
+                .body(resource);
     }
 
+    /**
+     * 删除
+     *
+     * @param id
+     */
     @DeleteMapping("/employees/{id}")
     void deleteEmployee(@PathVariable long id) {
         repository.deleteById(id);
@@ -34,6 +52,7 @@ public class EmployeeController {
 
     /**
      * 修改，不存在则保存
+     *
      * @param newEmployee
      * @param id
      * @return
@@ -58,8 +77,13 @@ public class EmployeeController {
      * @return
      */
     @GetMapping("/employees")
-    public List<Employee> all() {
-        return repository.findAll();
+    public Resources<Resource<Employee>> all() {
+        List<Resource<Employee>> employees = repository.findAll().stream().map(
+                assembler::toResource
+        ).collect(Collectors.toList());
+        return new Resources<>(employees,
+                linkTo(methodOn(EmployeeController.class).all()).withSelfRel()
+        );
     }
 
     /**
@@ -70,10 +94,8 @@ public class EmployeeController {
      */
     @GetMapping("/employees/{id}")
     Resource<Employee> one(@PathVariable Long id) {
-         Employee employee =  repository.findById(id)
-                .orElseThrow(() -> new EmployeeNotFoundException(id));
-         return new Resource<>(employee,
-                 linkTo(methodOn(EmployeeController.class).one(id)).withSelfRel(),
-                 linkTo(methodOn(EmployeeController.class).all()).withRel("employees"));
+
+        Employee employee = repository.findById(id).orElseThrow(() -> new EmployeeNotFoundException(id));
+        return assembler.toResource(employee);
     }
 }

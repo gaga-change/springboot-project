@@ -5,6 +5,6 @@ public class EmployeeNotFoundException extends RuntimeException {
         super();
     }
     EmployeeNotFoundException(long id) {
-        super("没有该信息");
+        super("Could not find employee " + id);
     }
 }
