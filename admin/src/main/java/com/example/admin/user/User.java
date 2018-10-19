@@ -1,5 +1,6 @@
 package com.example.admin.user;
 
+import com.example.admin.util.Encrypt;
 import lombok.Data;
 
 import javax.persistence.Entity;
@@ -19,5 +20,20 @@ public class User {
 
     private String username;
 
-    private String password;
+    private String passwordEncrypt;
+
+    User(String username, String passwordEncrypt) {
+        this.username = username;
+        this.passwordEncrypt = passwordEncrypt;
+    }
+
+    public void setPassword(String password) {
+        this.passwordEncrypt = Encrypt.turnMesssage(password);
+    }
+
+    public String getPassword() {
+        return this.passwordEncrypt;
+    }
+
+
 }

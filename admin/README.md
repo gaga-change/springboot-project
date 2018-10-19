@@ -1,5 +1,17 @@
 # 后台管理demo
 
+## 依赖
+
+* web
+* jpa
+* mysql
+* freemarker
+* hateoas
+* RESTFul
+* session-core
+* lombok
+* restdocs-mockmvc
+
 ## 功能点
 
 ### 前台展示
