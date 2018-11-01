@@ -33,15 +33,15 @@
         $(function  () {
             layui.use('form', function(){
               var form = layui.form;
-              // layer.msg('玩命卖萌中', function(){
-              //   //关闭后的操作
-              //   });
               //监听提交
               form.on('submit(login)', function(data){
-                // alert(888)
-                layer.msg(JSON.stringify(data.field),function(){
-                    location.href='index.html'
-                });
+                  $.post("/api/user/login", data.field).then(function(res) {
+                      if (res.msg) {
+                          layer.msg(res.msg);
+                      } else {
+                          location.href = "/"
+                      }
+                  })
                 return false;
               });
             });
