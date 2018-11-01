@@ -1,11 +1,14 @@
 package com.example.admin.user;
 
+import com.example.admin.role.Role;
 import com.example.admin.util.Encrypt;
 import lombok.Data;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import java.util.Set;
 
 /**
  * Data : lombok注解，自动设置get\set
@@ -21,6 +24,9 @@ public class User {
     private String username;
 
     private String passwordEncrypt;
+
+    @ManyToMany(mappedBy = "users")
+    private Set<Role> roles;
 
     User(String username, String passwordEncrypt) {
         this.username = username;
