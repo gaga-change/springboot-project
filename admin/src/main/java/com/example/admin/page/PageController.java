@@ -15,12 +15,13 @@ public class PageController {
      * @return index.ftl
      */
     @RequestMapping("")
-    public String admin(HttpSession httpSession) {
+    public String admin(HttpSession httpSession, Map<String, Object> map) {
         // 校验是否登录
         User user = (User)httpSession.getAttribute("user");
         if (user == null) {
             return "redirect:/login.html";
         }
+        map.put("user", user);
         return "index";
     }
 
