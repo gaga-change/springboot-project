@@ -1,10 +1,3 @@
-
-function TurnRest(res) {
-    return {
-
-    }
-}
-
 $(function () {
     //加载弹出层
     layui.use(['form', 'element'],
@@ -158,19 +151,15 @@ function x_admin_show(title, url, w, h) {
     if (title == null || title == '') {
         title = false;
     }
-    ;
     if (url == null || url == '') {
         url = "404.html";
     }
-    ;
     if (w == null || w == '') {
         w = ($(window).width() * 0.9);
     }
-    ;
     if (h == null || h == '') {
         h = ($(window).height() - 50);
     }
-    ;
     layer.open({
         type: 2,
         area: [w + 'px', h + 'px'],
@@ -192,4 +181,15 @@ function x_admin_close(refresh) {
     }
 }
 
-
+/** 获取url参数 */
+function getQueryVariable(variable) {
+    var query = window.location.search.substring(1);
+    var vars = query.split("&");
+    for (var i = 0; i < vars.length; i++) {
+        var pair = vars[i].split("=");
+        if (pair[0] == variable) {
+            return pair[1];
+        }
+    }
+    return (false);
+}

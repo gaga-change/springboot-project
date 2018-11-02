@@ -76,7 +76,7 @@
             switch (obj.event) {
                 case 'add':
                     // layer.msg('添加');
-                    x_admin_show('编辑', 'role-add.html')
+                    x_admin_show('添加', 'role-add.html')
                     break;
                 case 'update':
                     if (data.length === 0) {
@@ -114,7 +114,8 @@
                     //向服务端发送删除指令
                 });
             } else if (layEvent === 'edit') {
-                layer.msg('编辑操作');
+                // layer.msg('编辑操作');
+                x_admin_show('编辑', 'role-add.html?self=' + encodeURI(data._links.self.href))
             }
         });
     })

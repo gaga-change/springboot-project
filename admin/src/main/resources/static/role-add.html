@@ -16,7 +16,7 @@
 
 <body>
 <div class="x-body">
-    <form action="" method="post" class="layui-form layui-form-pane">
+    <form action="" method="post" class="layui-form layui-form-pane" lay-filter="roleForm">
         <div class="layui-form-item">
             <label for="name" class="layui-form-label">
                 <span class="x-red">*</span>角色名
@@ -79,6 +79,10 @@
     </form>
 </div>
 <script>
+    /**
+     * 获取url中id。 并获取详情 -> 初始化数据
+     */
+    var selfLink = getQueryVariable('self')
 
     layui.use(['form', 'layer'], function () {
         $ = layui.jquery;
@@ -86,30 +90,35 @@
             contentType: "application/json"
         });
         var form = layui.form
-            , layer = layui.layer;
-
-        //自定义验证规则
-        // form.verify({
-        //     nikename: function (value) {
-        //         if (value.length < 5) {
-        //             return '昵称至少得5个字符啊';
-        //         }
-        //     }
-        //     , pass: [/(.+){6,12}$/, '密码必须6到12位']
-        //     , repass: function (value) {
-        //         if ($('#L_pass').val() != $('#L_repass').val()) {
-        //             return '两次密码不一致';
-        //         }
-        //     }
-        // });
+        var layer = layui.layer
+        if (selfLink) {
+            var index = layer.load(2, {time: 10 * 1000})
+            $.get(selfLink).then(function (res) {
+                form.val("roleForm", res)
+                layer.close(index)
+            })
+        }
 
         //监听提交
         form.on('submit(add)', function (data) {
-            $.post("/api/roles", JSON.stringify(data.field)).then(function (res) {
-                window.x_admin_close(true)
-            }).catch(function (res) {
-                layer.alert("添加失败！<br/>" + JSON.stringify(res))
-            })
+            if (selfLink) {
+                $.ajax({
+                    type: 'PUT',
+                    url: selfLink,
+                    data: JSON.stringify(data.field)
+                }).then(function(res) {
+                    window.x_admin_close(true)
+                }).catch(function (res) {
+                    layer.alert("添加失败！<br/>" + JSON.stringify(res))
+                })
+            } else {
+                $.post("/api/roles", JSON.stringify(data.field)).then(function (res) {
+                    window.x_admin_close(true)
+                }).catch(function (res) {
+                    layer.alert("添加失败！<br/>" + JSON.stringify(res))
+                })
+            }
+
             return false;
         });
 
