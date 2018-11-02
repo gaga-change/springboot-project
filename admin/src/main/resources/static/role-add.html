@@ -83,7 +83,6 @@
      * 获取url中id。 并获取详情 -> 初始化数据
      */
     var selfLink = getQueryVariable('self')
-
     layui.use(['form', 'layer'], function () {
         $ = layui.jquery;
         $.ajaxSetup({
@@ -106,7 +105,7 @@
                     type: 'PUT',
                     url: selfLink,
                     data: JSON.stringify(data.field)
-                }).then(function(res) {
+                }).then(function (res) {
                     window.x_admin_close(true)
                 }).catch(function (res) {
                     layer.alert("添加失败！<br/>" + JSON.stringify(res))
@@ -121,17 +120,8 @@
 
             return false;
         });
-
-
     });
 </script>
-<script>var _hmt = _hmt || [];
-(function () {
-    var hm = document.createElement("script");
-    hm.src = "https://hm.baidu.com/hm.js?b393d153aeb26b46e9431fabaf0f6190";
-    var s = document.getElementsByTagName("script")[0];
-    s.parentNode.insertBefore(hm, s);
-})();</script>
 </body>
 
 </html>
