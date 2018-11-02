@@ -106,12 +106,7 @@
         //监听提交
         form.on('submit(add)', function (data) {
             $.post("/api/roles", JSON.stringify(data.field)).then(function (res) {
-                layer.alert("增加成功", {icon: 6}, function () {
-                    // 获得frame索引
-                    var index = parent.layer.getFrameIndex(window.name);
-                    //关闭当前frame
-                    parent.layer.close(index);
-                })
+                window.x_admin_close(true)
             }).catch(function (res) {
                 layer.alert("添加失败！<br/>" + JSON.stringify(res))
             })
