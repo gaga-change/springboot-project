@@ -55,10 +55,11 @@
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label"><span class="x-red">*</span>角色</label>
-            <div class="layui-input-block">
-                <input type="checkbox" name="like1[write]" lay-skin="primary" title="超级管理员" checked="">
-                <input type="checkbox" name="like1[read]" lay-skin="primary" title="编辑人员">
-                <input type="checkbox" name="like1[write]" lay-skin="primary" title="宣传人员" checked="">
+            <div class="layui-input-block" id="roles">
+                <!--<input type="checkbox" name="like1[write]" lay-skin="primary" title="超级管理员" checked="">-->
+                <!--<input type="checkbox" name="like1[read]" lay-skin="primary" title="编辑人员">-->
+                <!--<input type="checkbox" name="like1[write]" lay-skin="primary" title="宣传人员" checked="">-->
+                <!--<input type="checkbox" name="roles[1]" lay-skin="primary" title="嘎嘎">-->
             </div>
         </div>
         <div class="layui-form-item">
@@ -66,8 +67,8 @@
                 <span class="x-red">*</span>密码
             </label>
             <div class="layui-input-inline">
-                <input type="password" id="password" name="password" required="" lay-verify="pass"
-                       autocomplete="off" class="layui-input">
+                <input type="password" id="password" name="password" required="" lay-verify="pass" autocomplete="off"
+                       class="layui-input">
             </div>
             <div class="layui-form-mid layui-word-aux">
                 6到16个字符
@@ -75,11 +76,12 @@
         </div>
         <div class="layui-form-item">
             <label for="repass" class="layui-form-label">
-                <span class="x-red">*</span>确认密码
+                <span class="x-red">*</span>
+                确认密码
             </label>
             <div class="layui-input-inline">
-                <input type="password" id="repass" name="repass" required="" lay-verify="repass"
-                       autocomplete="off" class="layui-input">
+                <input type="password" id="repass" name="repass" required="" lay-verify="repass" autocomplete="off"
+                       class="layui-input">
             </div>
         </div>
         <div class="layui-form-item">
@@ -97,6 +99,7 @@
      */
     var URL = '/api/users'
     var selfLink = getQueryVariable('self')
+
     layui.use(['form', 'layer'], function () {
         var $ = layui.jquery;
         var form = layui.form
@@ -104,6 +107,15 @@
         $.ajaxSetup({
             contentType: "application/json"
         });
+
+        $.get('/api/roles/all').then(function (res) {
+            console.log(res)
+            res.forEach(function (item) {
+                var ele = $('<input type="checkbox" name="roles[' + item.id + ']" lay-skin="primary" title="' + item.name + '">')
+                $('#roles').append(ele)
+            })
+            form.render('checkbox', 'addForm')
+        })
 
         if (selfLink) {
             var index = layer.load(2, {time: 10 * 1000})
@@ -122,6 +134,8 @@
         });
         //监听提交
         form.on('submit(add)', function (data) {
+            console.log(data.field)
+            return
             if (selfLink) {
                 $.ajax({
                     type: 'PUT',
