@@ -3,13 +3,12 @@ package com.example.demo;
 
 import com.example.demo.card.Card;
 import com.example.demo.card.CardRepository;
+import com.example.demo.card.CardService;
 import com.example.demo.user.User;
 import com.example.demo.user.UserRepository;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import com.example.demo.user.UserService;
+import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.Entity;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -19,38 +18,52 @@ public class MainController {
 
     private UserRepository userRepository;
     private CardRepository cardRepository;
+    private CardService cardService;
+    private UserService userService;
 
-    public MainController(UserRepository userRepository, CardRepository cardRepository) {
+    public MainController(UserRepository userRepository, CardRepository cardRepository, CardService cardService, UserService userService) {
         this.userRepository = userRepository;
         this.cardRepository = cardRepository;
+        this.cardService = cardService;
+        this.userService = userService;
     }
 
     @PostMapping("/create_user")
     Map createUser(@RequestBody UserBody userBody) {
         Map<String, Object> res = new HashMap<>();
         String msg = "";
-        /*
-        * 获取用户名
-        *  - 有 创建用户
-        *   - 获取身份证号码
-        *     - 有 创建身份证
-        *  - 无 退出
-        * */
         String username = userBody.getName();
+        // 用户名不能为空
         if (username != null && !username.isEmpty()) {
-            User user = new User();
-            System.out.println(user.getId());
-            user.setName(userBody.getName());
-            userRepository.save(user);
-            String cardNum = userBody.getCardNum();
-            if (cardNum != null && !cardNum.isEmpty()) {
-                Card card = new Card(cardNum, new Date(), user);
-                cardRepository.save(card);
-            }
+            // 保存用户
+            User user = new User(userBody.getName(), userBody.getAge(), new Date());
+            userService.saveUser(user);
+            // 保存身份证
+            Card card = new Card(user, userBody.getCardNum(), new Date());
+            cardService.saveCard(card);
         } else {
             msg = "用户名不能为空";
         }
         res.put("msg", msg);
+        return res;
+    }
+
+    @GetMapping("/my_user/{id}")
+    Map getUser(@PathVariable long id) {
+        Map<String, Object> res = new HashMap<>();
+        String msg = "";
+        User user = userRepository.findById(id).orElse(null);
+        if (user != null) {
+            Map<String, Object> data = new HashMap<>();
+            data.put("name", user.getName());
+            data.put("age", user.getAge());
+            data.put("createAt", user.getCreateAt());
+            Card card = cardRepository.findByUserId(id).orElse(new Card());
+            data.put("card", card);
+            res.put("data", data);
+        } else {
+            msg = "用户不存在";
+        }
         return res;
     }
 }

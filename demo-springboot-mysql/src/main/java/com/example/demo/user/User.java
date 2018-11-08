@@ -9,10 +9,20 @@ import java.util.Date;
 @Entity
 public class User {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     private String name;
     private int age;
     private Date createAt;
+
+    public User() {
+        super();
+    }
+
+    public User(String name, int age, Date createAt) {
+        this.name = name;
+        this.age = age;
+        this.createAt = createAt;
+    }
 }
