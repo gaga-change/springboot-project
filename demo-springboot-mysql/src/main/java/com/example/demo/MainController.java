@@ -4,6 +4,7 @@ package com.example.demo;
 import com.example.demo.card.Card;
 import com.example.demo.card.CardRepository;
 import com.example.demo.card.CardService;
+import com.example.demo.card.CardSummary;
 import com.example.demo.user.User;
 import com.example.demo.user.UserRepository;
 import com.example.demo.user.UserService;
@@ -28,6 +29,7 @@ public class MainController {
         this.userService = userService;
     }
 
+    // 创建数据
     @PostMapping("/create_user")
     Map createUser(@RequestBody UserBody userBody) {
         Map<String, Object> res = new HashMap<>();
@@ -48,6 +50,7 @@ public class MainController {
         return res;
     }
 
+    // 查询用户
     @GetMapping("/my_user/{id}")
     Map getUser(@PathVariable long id) {
         Map<String, Object> res = new HashMap<>();
@@ -58,12 +61,14 @@ public class MainController {
             data.put("name", user.getName());
             data.put("age", user.getAge());
             data.put("createAt", user.getCreateAt());
-            Card card = cardRepository.findByUserId(id).orElse(new Card());
+//            Card card = cardRepository.findByUserId(id).orElse(new Card());
+            CardSummary card = cardRepository.findByUserId(id).orElse(null);
             data.put("card", card);
             res.put("data", data);
         } else {
             msg = "用户不存在";
         }
+        res.put("msg", msg);
         return res;
     }
 }
